@@ -21,7 +21,6 @@ subject(:journey2) { described_class.new }
       journey.complete('Temple')
       expect(journey.exit_station).to eq 'Temple'
     end
-
   end
 
   describe '#fare' do
@@ -29,5 +28,10 @@ subject(:journey2) { described_class.new }
       journey.complete('Temple')
       expect(journey.fare).to eq 1.00
     end
-  end 
+    it 'should add penalty fare' do
+      journey.penalty_fare
+      expect(journey.fare).to eq 7.00
+    end
+
+  end
 end

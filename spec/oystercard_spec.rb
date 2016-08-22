@@ -34,6 +34,7 @@ subject(:oyster) { described_class.new }
     subject(:empty_oyster) { described_class.new }
     let(:entry_station) {double(:station)}
     let(:exit_station) {double(:station)}
+    let(:journey) {double(:journey, penalty_fare: nil, complete: nil, entry_station: 'entry', exit_station: 'exit')}
 
     before do
       oyster.top_up(10.00)
@@ -42,30 +43,34 @@ subject(:oyster) { described_class.new }
     describe '#touch_in' do
 
       it 'should prevent touch_in if balance < 1' do
-        expect {empty_oyster.touch_in(entry_station)}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
+        expect {empty_oyster.touch_in(entry_station, journey)}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
       end
     end
 
     describe '#touch_out' do
 
       it 'deducts £6 penalty if journey not closed' do
-        oyster.touch_in(entry_station)
-        oyster.touch_in(entry_station)
-        expect{oyster.touch_out(exit_station)}.to change{oyster.balance}.by -7.00
+        allow(journey).to receive(:fare).and_return(7)
+        oyster.touch_in(entry_station, journey)
+        oyster.touch_in(entry_station, journey)
+        expect{oyster.touch_out(exit_station, journey)}.to change{oyster.balance}.by -7.00
       end
 
       it 'deducts £6 penalty if journey not opened' do
-        expect{oyster.touch_out(exit_station)}.to change{oyster.balance}.by -7.00
+        allow(journey).to receive(:fare).and_return(7)
+        expect{oyster.touch_out(exit_station, journey)}.to change{oyster.balance}.by -7.00
       end
 
       it 'should reduce balance by £1' do
-        oyster.touch_in(entry_station)
-        expect{oyster.touch_out(exit_station)}.to change{oyster.balance}.by -1.00
+        allow(journey).to receive(:fare).and_return(1)
+        oyster.touch_in(entry_station, journey)
+        expect{oyster.touch_out(exit_station, journey)}.to change{oyster.balance}.by -1.00
       end
 
-      it 'should forget entry_station on touch_out' do
-        oyster.touch_in(entry_station)
-        oyster.touch_out(exit_station)
+      it 'should forget journey on touch_out' do
+        oyster.touch_in(entry_station, journey)
+        allow(journey).to receive(:fare).and_return(1)
+        oyster.touch_out(exit_station, journey)
         expect(oyster.journey).to be_nil
       end
     end
@@ -74,6 +79,7 @@ subject(:oyster) { described_class.new }
   context 'recording journey history' do
     let(:entry_station) {double(:station)}
     let(:exit_station) {double(:station)}
+    let(:journey) {double(:journey, penalty_fare: nil, complete: nil, entry_station: 'entry', exit_station: 'exit', fare: 1.00)}
 
     before do
       oyster.top_up(10.00)
@@ -85,11 +91,10 @@ subject(:oyster) { described_class.new }
       end
 
       it 'touch_out should update journey history array' do
-        oyster.touch_in(entry_station)
-        oyster.touch_out(exit_station)
-        expect(oyster.view_history).to be == [{entry_station => exit_station}]
+        oyster.touch_in(entry_station, journey)
+        oyster.touch_out(exit_station, journey)
+        expect(oyster.view_history).to be == [{"entry" => "exit"}]
       end
-
     end
 
   end

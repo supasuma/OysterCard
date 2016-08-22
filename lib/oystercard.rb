@@ -1,3 +1,4 @@
+require_relative 'journey'
 class Oystercard
 
   attr_reader :balance, :journey, :view_history
@@ -16,15 +17,14 @@ class Oystercard
      @balance += amount
    end
 
-   def touch_in(entry_station)
+   def touch_in(entry_station, journey_class = nil)
      fail "Insufficient Funds Available. Minimum Balance £#{MINIMUM_BALANCE}" if balance < MINIMUM_BALANCE
-    create_new_journey(entry_station)
+     create_new_journey(entry_station, journey_class)
    end
 
-   def touch_out(exit_station)
-    complete_journey(exit_station)
+   def touch_out(exit_station, journey_class = nil)
+    complete_journey(exit_station, journey_class)
     add_to_history(journey.entry_station, journey.exit_station)
-    deduct(@journey.fare)
     @journey = nil
    end
 
@@ -34,20 +34,29 @@ class Oystercard
      @balance -= fare
    end
 
-   def create_new_journey(entry_station)
-     if @journey.nil?
-       @journey = Journey.new(entry_station)
-     else
-       @journey.penalty_fare
-     end
+   def create_new_journey(entry_station, journey_class = Journey.new(entry_station))
+     @journey.nil? ? @journey = journey_class : create_new_penalty_journey(entry_station, journey_class)
    end
 
-   def complete_journey(exit_station)
+   def create_new_penalty_journey(entry_station, journey_class = Journey.new(entry_station))
+     complete_journey("Unknown Station")
+     charge_penalty_to_account
+     add_to_history(journey.entry_station, journey.exit_station)
+     @journey = journey_class
+   end
+
+   def charge_penalty_to_account
+     @journey.penalty_fare
+     deduct(@journey.fare)
+   end
+
+   def complete_journey(exit_station, journey_class = Journey.new)
      if @journey.nil?
-       @journey = Journey.new
+       @journey = journey_class
        @journey.penalty_fare
      end
        @journey.complete(exit_station)
+       deduct(@journey.fare)
    end
 
    def add_to_history(entry, exit)
