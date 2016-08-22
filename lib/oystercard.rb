@@ -3,8 +3,9 @@ class Oystercard
 attr_reader :balance, :in_journey
 
 LIMIT = 90
-  def initialize
-    @balance = 0
+BALANCE = 0
+  def initialize(balance = BALANCE)
+    @balance = balance
     @in_journey = false
   end
 
@@ -22,6 +23,7 @@ LIMIT = 90
   end
 
   def touch_in
+    fail 'not enough credit' if empty?
     @in_journey = true
   end
 
@@ -33,6 +35,10 @@ LIMIT = 90
 
   def full?(amount)
     @balance + amount > LIMIT
+  end
+
+  def empty?
+    @balance < 1
   end
 
 end

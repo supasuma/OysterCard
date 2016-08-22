@@ -30,7 +30,7 @@ describe Oystercard do
     it 'raises an error when more than £90 is added' do
       LIMIT = Oystercard::LIMIT
       oystercard.top_up(LIMIT)
-      expect{ oystercard.top_up 1 }.to raise_error "Limit £#{LIMIT} exceeded"
+      expect{ oystercard.top_up 5 }.to raise_error "Limit £#{LIMIT} exceeded"
     end
   end
   end
@@ -39,8 +39,14 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'can touch in' do
+        oystercard.top_up(10) #need stub
         oystercard.touch_in
         expect(oystercard).to be_in_journey
+      end
+      context 'When balance is less than £1' do
+        it 'raises an error' do
+          expect { oystercard.touch_in }.to raise_error 'not enough credit'
+        end
       end
     end
 
@@ -53,8 +59,11 @@ describe Oystercard do
      end
    end
 
+
+
    describe '#touch_out' do
      it 'can touch out' do
+       oystercard.top_up(10) #need stub
        oystercard.touch_in
        oystercard.touch_out
        expect(oystercard).not_to be_in_journey
