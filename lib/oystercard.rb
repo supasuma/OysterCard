@@ -1,15 +1,16 @@
 require_relative 'journey'
 class Oystercard
 
-  attr_reader :balance, :journey, :view_history
+  attr_reader :balance, :view_history
 
   BALANCE_LIMIT = 90.00
   MINIMUM_BALANCE = 1.00
 
-   def initialize
+   def initialize(journey_class = Journey)
      @balance = 0.00
      @journey = nil
      @view_history = []
+     @journey_class = journey_class
    end
 
    def top_up(amount)
@@ -17,49 +18,55 @@ class Oystercard
      @balance += amount
    end
 
-   def touch_in(entry_station, journey_class = nil)
+   def touch_in(entry_station)
      fail "Insufficient Funds Available. Minimum Balance £#{MINIMUM_BALANCE}" if balance < MINIMUM_BALANCE
-     create_new_journey(entry_station, journey_class)
+     create_new_journey(entry_station)
    end
 
-   def touch_out(exit_station, journey_class = nil)
-    complete_journey(exit_station, journey_class)
+   def touch_out(exit_station)
+    complete_journey(exit_station)
     add_to_history(journey.entry_station, journey.exit_station)
-    @journey = nil
+    reset_journey
    end
 
    private
+
+   attr_reader :journey, :journey_class
 
    def deduct(fare)
      @balance -= fare
    end
 
-   def create_new_journey(entry_station, journey_class = Journey.new(entry_station))
-     @journey.nil? ? @journey = journey_class : create_new_penalty_journey(entry_station, journey_class)
+   def reset_journey
+     @journey = nil
    end
 
-   def create_new_penalty_journey(entry_station, journey_class = Journey.new(entry_station))
+   def create_new_journey(entry_station)
+     journey.nil? ? @journey = journey_class.new(entry_station) : create_new_penalty_journey(entry_station)
+   end
+
+   def create_new_penalty_journey(entry_station)
      complete_journey("Unknown Station")
      charge_penalty_to_account
      add_to_history(journey.entry_station, journey.exit_station)
-     @journey = journey_class
+     @journey = journey_class.new(entry_station)
    end
 
    def charge_penalty_to_account
-     @journey.penalty_fare
-     deduct(@journey.fare)
+     journey.penalty_fare
+     deduct(journey.fare)
    end
 
-   def complete_journey(exit_station, journey_class = Journey.new)
-     if @journey.nil?
-       @journey = journey_class
-       @journey.penalty_fare
+   def complete_journey(exit_station)
+     if journey.nil?
+       @journey = journey_class.new
+       journey.penalty_fare
      end
-       @journey.complete(exit_station)
-       deduct(@journey.fare)
+       journey.complete(exit_station)
+       deduct(journey.fare)
    end
 
    def add_to_history(entry, exit)
-     @view_history << {entry => exit}
+     view_history << {entry => exit}
    end
 end
