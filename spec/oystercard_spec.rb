@@ -38,6 +38,9 @@ subject(:oyster) { described_class.new }
   end
 
   context 'changing journey states' do
+    before do
+      oyster.top_up(10.00)
+    end
 
     describe '#in_journey?' do
       it 'should return false when initialized' do
@@ -49,6 +52,10 @@ subject(:oyster) { described_class.new }
       it 'should update in_journey? to true' do
         oyster.touch_in
         expect(oyster).to be_in_journey
+      end
+      it 'should prevent touch_in if balance < 1' do
+        oyster.deduct(10.00)
+        expect {oyster.touch_in}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
       end
     end
 
