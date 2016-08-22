@@ -21,12 +21,10 @@ class Oystercard
 
    def touch_in(entry_station)
      fail "Insufficient Funds Available. Minimum Balance £#{MINIMUM_BALANCE}" if balance < MINIMUM_BALANCE
-     @in_journey = true
      update_entry_station(entry_station)
    end
 
    def touch_out
-     @in_journey = false
      deduct(1.00)
      forget_entry_station
    end
