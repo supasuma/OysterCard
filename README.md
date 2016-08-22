@@ -12,3 +12,5 @@ Card      touch_out [deducts 1.00 from balance]
 Card      in_journey?
 Card      entry_station
 Card      view_history
+Station   zone
+Station   name
