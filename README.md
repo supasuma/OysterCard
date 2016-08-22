@@ -5,4 +5,4 @@ Object    Message
 Customer
 Money
 Card      balance
-Card      top_up 
+Card      top_up (balance < 90.00)
