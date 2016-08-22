@@ -1,4 +1,4 @@
-describe Oyester do
+describe Oyster do
 
 
 end
