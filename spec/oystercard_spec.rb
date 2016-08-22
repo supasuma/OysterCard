@@ -29,15 +29,12 @@ subject(:oyster) { described_class.new }
       end
     end
 
-    describe '#deduct' do
-      it 'should deduct argument from balance' do
-        oyster.deduct(5.00)
-        expect(oyster.balance).to eq(5.00)
-      end
-    end
   end
 
   context 'changing journey states' do
+
+    subject(:empty_oyster) { described_class.new }
+
     before do
       oyster.top_up(10.00)
     end
@@ -54,8 +51,7 @@ subject(:oyster) { described_class.new }
         expect(oyster).to be_in_journey
       end
       it 'should prevent touch_in if balance < 1' do
-        oyster.deduct(10.00)
-        expect {oyster.touch_in}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
+        expect {empty_oyster.touch_in}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
       end
     end
 
@@ -64,6 +60,9 @@ subject(:oyster) { described_class.new }
         oyster.touch_in
         oyster.touch_out
         expect(oyster).not_to be_in_journey
+      end
+      it 'should reduce balance by £1' do
+        expect{oyster.touch_out}.to change{oyster.balance}.by -1.00
       end
     end
   end
