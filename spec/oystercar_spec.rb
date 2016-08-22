@@ -63,7 +63,23 @@ describe Oyster do
     end
 
     it "deducts fair on touch out" do
-      expect{subject.touch_out}.to change{subject.balance}.by -Oyster::MINIMUM_FARE
+      expect{subject.touch_out(station)}.to change{subject.balance}.by -Oyster::MINIMUM_FARE
+    end
+  end
+
+  context '#journeys' do
+
+    let(:station2) {double :station2}
+
+    it "returns an empty list of journeys on ititialization" do
+      expect(subject.journeys).to eq([])
+    end
+
+    it "creates a entry and exit hash within journey" do
+      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
+      subject.touch_in(station)
+      subject.touch_out(station2)
+      expect(subject.journeys).to include({:entry => station, :exit => station2})
     end
   end
 end
