@@ -19,11 +19,12 @@ describe Oyster do
     end
   end
 
-  context '#deduct' do
-    it 'will deduct the balance by a given amount' do
-      expect{subject.deduct(10)}.to change{subject.balance}.by -10
-    end
-  end
+# taken out as method was moved to private 
+  # context '#deduct' do
+  #   it 'will deduct the balance by a given amount' do
+  #     expect{subject.deduct(10)}.to change{subject.balance}.by -10
+  #   end
+  # end
 
   context '#in_journey?' do
     it 'starts out as not being on a journey' do
