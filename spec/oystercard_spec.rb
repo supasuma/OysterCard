@@ -31,4 +31,25 @@ subject(:oyster) { described_class.new }
     end
   end
 
+  describe '#in_journey?' do
+    it 'should return false when initialized' do
+      expect(oyster).not_to be_in_journey
+    end
+  end
+
+  describe '#touch_in' do
+    it 'should update in_journey? to true' do
+      oyster.touch_in
+      expect(oyster).to be_in_journey
+    end
+  end
+
+  describe '#touch_out' do
+    it 'should update in_journey? to false' do
+      oyster.touch_in
+      oyster.touch_out
+      expect(oyster).not_to be_in_journey
+    end
+  end
+
 end
