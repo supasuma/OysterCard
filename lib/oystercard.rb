@@ -8,8 +8,12 @@ LIMIT = 90
   end
 
   def top_up(amount)
-    fail 'Limit #{LIMIT} exceeded' if @balance + amount > LIMIT
+    fail "Limit £#{LIMIT} exceeded" if @balance + amount > LIMIT
     @balance += amount
+  end
+
+  def deduct(amount)
+    @balance -= amount
   end
 
 end
