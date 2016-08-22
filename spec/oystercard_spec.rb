@@ -49,6 +49,11 @@ subject(:oyster) { described_class.new }
 
     describe '#touch_in' do
 
+      it 'deducts £6 penalty if journey not closed' do
+        oyster.touch_in(entry_station)
+        expect{oyster.touch_in(entry_station)}.to change{oyster.balance}.by -6.00
+      end
+
       it 'should update in_journey? to true' do
         oyster.touch_in(entry_station)
         expect(oyster).to be_in_journey
@@ -63,12 +68,18 @@ subject(:oyster) { described_class.new }
     end
 
     describe '#touch_out' do
+
+      it 'deducts £6 penalty if journey not opened' do
+        expect{oyster.touch_out(exit_station)}.to change{oyster.balance}.by -6.00
+      end
+
       it 'should update in_journey? to false' do
         oyster.touch_in(entry_station)
         oyster.touch_out(exit_station)
         expect(oyster).not_to be_in_journey
       end
       it 'should reduce balance by £1' do
+        oyster.touch_in(entry_station)
         expect{oyster.touch_out(exit_station)}.to change{oyster.balance}.by -1.00
       end
       it 'should forget entry_station on touch_out' do

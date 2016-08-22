@@ -21,17 +21,29 @@ class Oystercard
    end
 
    def touch_in(entry_station)
+     check_penalty_in
      fail "Insufficient Funds Available. Minimum Balance £#{MINIMUM_BALANCE}" if balance < MINIMUM_BALANCE
      update_entry_station(entry_station)
    end
 
    def touch_out(exit_station)
-     deduct(1.00)
+     deduct(1.00) unless check_penalty_out
      add_to_history(entry_station, exit_station)
      forget_entry_station
    end
 
    private
+
+   def check_penalty_in
+     deduct(6.00) if !@entry_station.nil?
+   end
+
+   def check_penalty_out
+     if @entry_station.nil?
+       deduct(6.00)
+       @entry_station = 'No station'
+     end
+   end
 
    def deduct(fare)
      @balance -= fare
