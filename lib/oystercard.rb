@@ -1,13 +1,13 @@
 class Oystercard
 
-  attr_reader :balance, :entry_station, :view_history
+  attr_reader :balance, :journey, :view_history
 
   BALANCE_LIMIT = 90.00
   MINIMUM_BALANCE = 1.00
 
    def initialize
      @balance = 0.00
-     @entry_station = nil
+     @journey = nil
      @view_history = []
    end
 
@@ -16,45 +16,38 @@ class Oystercard
      @balance += amount
    end
 
-   def in_journey?
-     !@entry_station.nil?
-   end
-
    def touch_in(entry_station)
-     check_penalty_in
      fail "Insufficient Funds Available. Minimum Balance £#{MINIMUM_BALANCE}" if balance < MINIMUM_BALANCE
-     update_entry_station(entry_station)
+    create_new_journey(entry_station)
    end
 
    def touch_out(exit_station)
-     deduct(1.00) unless check_penalty_out
-     add_to_history(entry_station, exit_station)
-     forget_entry_station
+    complete_journey(exit_station)
+    add_to_history(journey.entry_station, journey.exit_station)
+    deduct(@journey.fare)
+    @journey = nil
    end
 
    private
-
-   def check_penalty_in
-     deduct(6.00) if !@entry_station.nil?
-   end
-
-   def check_penalty_out
-     if @entry_station.nil?
-       deduct(6.00)
-       @entry_station = 'No station'
-     end
-   end
 
    def deduct(fare)
      @balance -= fare
    end
 
-   def update_entry_station(entry_station)
-     @entry_station = entry_station
+   def create_new_journey(entry_station)
+     if @journey.nil?
+       @journey = Journey.new(entry_station)
+     else
+       @journey.penalty_fare
+     end
    end
 
-   def forget_entry_station
-     @entry_station = nil
+   def complete_journey(exit_station)
+     if @journey.nil?
+       @journey = Journey.new
+       @journey.penalty_fare
+     end
+       @journey.complete(exit_station)
    end
 
    def add_to_history(entry, exit)
