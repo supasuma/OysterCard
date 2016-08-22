@@ -21,7 +21,14 @@ subject(:oyster) { described_class.new }
       msg = "Top up would exceed limit £#{Oystercard::BALANCE_LIMIT}"
       expect{oyster.top_up(100.00)}.to raise_error msg
     end
+  end
 
+  describe '#deduct' do
+    it 'should deduct argument from balance' do
+      oyster.top_up(10.00)
+      oyster.deduct(5.00)
+      expect(oyster.balance).to eq(5.00)
+    end
   end
 
 end
