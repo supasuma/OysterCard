@@ -1,6 +1,8 @@
 require 'oyster.rb'
 
 describe Oyster do
+  let(:station) {double :station}
+
   context 'initialize' do
     it 'is initialised with a balence of 0' do
       expect(subject.balance).to eq(0)
@@ -30,7 +32,7 @@ describe Oyster do
 
     it 'changes to being on a journey when you touch in' do
       subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject.in_journey?).to eq(true)
     end
   end
@@ -41,14 +43,19 @@ describe Oyster do
     end
 
     it "wont run touch in unless balance is at >= minimum fare." do
-      expect{subject.touch_in}.to raise_error "Not enough money on card."
+      expect{subject.touch_in(station)}.to raise_error "Not enough money on card."
+    end
+
+    it 'changes the station var to the touch in station' do
+      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
+      expect(subject.touch_in(station)).to eq(subject.entry_station)
     end
   end
 
   context '#touch_out' do
     before(:each) do
       subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
-      subject.touch_in
+      subject.touch_in(station)
     end
 
     it 'is possible to touch_out' do

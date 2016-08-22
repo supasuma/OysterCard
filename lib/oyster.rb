@@ -1,8 +1,7 @@
 
 
 class Oyster
-  attr_reader :balance, :in_journey
-  alias in_journey? in_journey
+  attr_reader :balance, :entry_station
 
   STARTING_BALANCE = 0.0
   MAX_BALANCE = 90.0
@@ -13,14 +12,22 @@ class Oyster
     @in_journey = false
   end
 
-  def touch_in
+  def in_journey?
+    if @entry_station == nil
+      @in_journey = false
+    else
+      @in_journey = true
+    end
+  end
+
+  def touch_in(entry_station)
     fail "Not enough money on card." if @balance < MINIMUM_FARE
-    @in_journey = true
+    @entry_station = entry_station
   end
 
   def touch_out
-    @in_journey = false
-    @balance -= MINIMUM_FARE
+    deduct(MINIMUM_FARE)
+    @entry_station = nil
   end
 
   def top_up(amount)
