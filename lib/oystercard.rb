@@ -1,6 +1,6 @@
 class Oystercard
 
-  attr_reader :balance, :entry_station
+  attr_reader :balance, :entry_station, :view_history
 
   BALANCE_LIMIT = 90.00
   MINIMUM_BALANCE = 1.00
@@ -8,6 +8,7 @@ class Oystercard
    def initialize
      @balance = 0.00
      @entry_station = nil
+     @view_history = []
    end
 
    def top_up(amount)
@@ -24,8 +25,9 @@ class Oystercard
      update_entry_station(entry_station)
    end
 
-   def touch_out
+   def touch_out(exit_station)
      deduct(1.00)
+     add_to_history(entry_station, exit_station)
      forget_entry_station
    end
 
@@ -41,5 +43,9 @@ class Oystercard
 
    def forget_entry_station
      @entry_station = nil
+   end
+
+   def add_to_history(entry, exit)
+     @view_history << {entry => exit}
    end
 end
