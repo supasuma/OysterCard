@@ -34,7 +34,7 @@ subject(:oyster) { described_class.new }
   context 'changing journey states' do
 
     subject(:empty_oyster) { described_class.new }
-
+    let(:station) {double(:station)}
     before do
       oyster.top_up(10.00)
     end
@@ -46,23 +46,33 @@ subject(:oyster) { described_class.new }
     end
 
     describe '#touch_in' do
+      let(:station) {double(:station)}
       it 'should update in_journey? to true' do
-        oyster.touch_in
+        oyster.touch_in(station)
         expect(oyster).to be_in_journey
       end
       it 'should prevent touch_in if balance < 1' do
-        expect {empty_oyster.touch_in}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
+        expect {empty_oyster.touch_in(station)}.to raise_error "Insufficient Funds Available. Minimum Balance £#{Oystercard::MINIMUM_BALANCE}"
+      end
+      it 'should remember entry_station' do
+        oyster.touch_in(station)
+        expect(oyster.entry_station).to eq station
       end
     end
 
     describe '#touch_out' do
       it 'should update in_journey? to false' do
-        oyster.touch_in
+        oyster.touch_in(station)
         oyster.touch_out
         expect(oyster).not_to be_in_journey
       end
       it 'should reduce balance by £1' do
         expect{oyster.touch_out}.to change{oyster.balance}.by -1.00
+      end
+      it 'should forget entry_station on touch_out' do
+        oyster.touch_in(station)
+        oyster.touch_out
+        expect(oyster.entry_station).to be_nil
       end
     end
   end
