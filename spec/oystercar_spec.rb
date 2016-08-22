@@ -29,6 +29,7 @@ describe Oyster do
     end
 
     it 'changes to being on a journey when you touch in' do
+      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
       subject.touch_in
       expect(subject.in_journey?).to eq(true)
     end
@@ -38,11 +39,24 @@ describe Oyster do
     it 'is possible to touch_in' do
       expect(subject).to respond_to(:touch_in)
     end
+
+    it "wont run touch in unless balance is at >= minimum fare." do
+      expect{subject.touch_in}.to raise_error "Not enough money on card."
+    end
   end
 
   context '#touch_out' do
+    before(:each) do
+      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
+      subject.touch_in
+    end
+
     it 'is possible to touch_out' do
       expect(subject).to respond_to(:touch_out)
+    end
+
+    it "deducts fair on touch out" do
+      expect{subject.touch_out}.to change{subject.balance}.by -Oyster::MINIMUM_FARE
     end
   end
 end

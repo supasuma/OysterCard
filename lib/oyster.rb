@@ -6,6 +6,7 @@ class Oyster
 
   STARTING_BALANCE = 0.0
   MAX_BALANCE = 90.0
+  MINIMUM_FARE = 1.0
 
   def initialize(balance = STARTING_BALANCE)
     @balance = balance
@@ -13,11 +14,13 @@ class Oyster
   end
 
   def touch_in
+    fail "Not enough money on card." if @balance < MINIMUM_FARE
     @in_journey = true
   end
 
   def touch_out
     @in_journey = false
+    @balance -= MINIMUM_FARE
   end
 
   def top_up(amount)
