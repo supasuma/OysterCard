@@ -35,9 +35,9 @@ describe Oystercard do
 
   context 'when travelling' do
 
-    describe 'Checking in journey status' do
+    describe 'Checking impact touch in and out' do
       before do
-        oystercard.top_up(10) #need stub
+        oystercard.top_up(10)
         oystercard.touch_in
       end
       it 'In journey when touch in' do
@@ -48,11 +48,15 @@ describe Oystercard do
         oystercard.touch_out
         expect(oystercard).not_to be_in_journey
       end
+
+      it 'check a charge is made when touch out' do
+        expect {oystercard.touch_out}.to change{oystercard.balance}.by(2)
+      end
     end
   end
 
     describe 'error messages' do
-      
+
         it 'raises an error when balance is less than £1' do
           expect { oystercard.touch_in }.to raise_error 'not enough credit'
         end
