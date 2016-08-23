@@ -3,7 +3,8 @@ require 'oystercard'
 describe Oystercard do
     subject(:oystercard) {described_class.new}
     let(:amount) { double :amount }
-      let(:station) { double :station }
+    let(:station) { double :station }
+    let(:station2) { double :station2 }
 
   describe 'Initializing a card' do
 
@@ -85,12 +86,19 @@ describe Oystercard do
     end
   end
 
-  describe 'mapping journeys'
-    it 'add hash to journeys array and had entry station key to hash when touching in' do
+  describe 'mapping journeys' do
+    before do
       oystercard.top_up(20)
       oystercard.touch_in(station)
-      expect(oystercard.journeys).to end_with({station: nil})
     end
+    it 'add hash to journeys array and had entry station key to hash when touching in' do
+      expect(oystercard.journeys).to end_with({station => nil})
+    end
+    it 'exit station to hash when touching out' do
+      oystercard.touch_out(2,station2)
+      expect(oystercard.journeys).to end_with({station => station2})
+    end
+  end
 
-    
+
 end

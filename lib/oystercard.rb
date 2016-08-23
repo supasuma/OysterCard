@@ -25,13 +25,14 @@ MINIMUM_BALANCE = 1
   def touch_in(station)
     fail 'below minimum balance' if empty?
     @entry_station = station
-    @journeys << {station: nil}
+    @journeys << {@entry_station => nil}
   end
 
   def touch_out(amount, station)
-    @entry_station = nil
     @exit_station = station
+    @journeys[-1][@entry_station] = station
     deduct(amount)
+    @entry_station = nil
   end
 
   private
