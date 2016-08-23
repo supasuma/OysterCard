@@ -26,6 +26,7 @@ MINIMUM_BALANCE = 1
   end
 
   def touch_out(amount)
+    @entry_station = nil
     deduct(amount)
     @in_journey = false
   end

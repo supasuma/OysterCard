@@ -43,7 +43,7 @@ describe Oystercard do
         oystercard.touch_in(station)
       end
       it 'In journey when touch in' do
-        expect(oystercard).to be_in_journey
+        expect(oystercard.in_journey?).to eq true
       end
 
       it 'Not in journey anymore when touch out' do
