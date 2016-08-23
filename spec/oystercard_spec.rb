@@ -4,7 +4,7 @@ describe Oystercard do
   subject(:oystercard) {described_class.new}
   let(:entry_station) { double :station }
   let(:exit_station) { double :station }
-  let(:journey) {{entry_station: entry_station, exit_station: exit_station}}
+  let(:journey) {{entry: entry_station, exit: exit_station}}
 
 
   describe '#initialize' do
@@ -29,14 +29,6 @@ describe Oystercard do
     it 'raises an error when instantiated balance is larger than limit' do
       msg = 'Balance cannot be larger than limit'
       expect {Oystercard.new 50, 100}.to raise_error msg
-    end
-
-    it 'is initially not in a journey' do
-      expect(oystercard).not_to be_in_journey
-    end
-
-    it 'has a minimum fare' do
-      expect(oystercard.fare).to eq described_class::MINIMUM_FARE
     end
 
     it 'has an empty list of journeys by default' do
@@ -72,13 +64,9 @@ describe Oystercard do
       oystercard.touch_in(entry_station)
     end
 
-    it 'will be aware of journey status' do
-      expect(oystercard).to be_in_journey
-    end
-
-    it 'will remember the entry station after touch in' do
-      expect(oystercard.entry_station).to eq entry_station
-    end
+    # it 'will be aware of journey status' do
+    #   expect(oystercard).to be_in_journey
+    # end
 
     it 'will not touch in if insufficient funds' do
       msg = 'Insufficient funds'
@@ -92,9 +80,10 @@ describe Oystercard do
       oystercard.touch_in(entry_station)
       oystercard.touch_out(exit_station)
     end
-    it 'will be aware of journey status' do
-      expect(oystercard).not_to be_in_journey
-    end
+
+    # it 'will be aware of journey status' do
+    #   expect(oystercard).not_to be_in_journey
+    # end
 
     it 'will deduct fare amount from card balance' do
       expect(oystercard.balance).to eq 4
