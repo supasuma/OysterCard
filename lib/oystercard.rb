@@ -7,6 +7,7 @@ MINIMUM_BALANCE = 1
   def initialize(balance = BALANCE)
     @balance = balance
     @in_journey = false
+    @entry_station = nil
   end
 
   def top_up(amount)
@@ -31,7 +32,7 @@ MINIMUM_BALANCE = 1
 
   private
 
-  attr_reader :balance, :in_journey
+  attr_reader :balance, :in_journey, :entry_station
 
   def deduct(amount)
     @balance -= amount

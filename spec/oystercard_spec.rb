@@ -63,14 +63,16 @@ describe Oystercard do
     end
   end
   describe 'add station to card when touching in' do
-    it 'add attributes' do
-      oystercard.top_up(20)
-      expect(oystercard).to respond_to(:touch_in).with(1).argument
-    end
-    it 'stores station argument in @entry_station' do
+    before do
       oystercard.top_up(20)
       oystercard.touch_in(station)
+    end
+    it 'stores station argument in @entry_station' do
       expect(oystercard.instance_variable_get(:@entry_station)).to eq station
-    end  
+    end
+    it 'forgets station argument once touched out' do
+      oystercard.touch_out(2)
+      expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
+    end
   end
 end
