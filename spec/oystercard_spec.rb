@@ -3,14 +3,12 @@ require 'oystercard'
 describe Oystercard do
     subject(:oystercard) {described_class.new}
 
-  describe '#card' do
-    it 'has a balance of zero' do
-      expect(oystercard.balance).to eq 0
-    end
-  end
+  describe 'Initializing a card' do
 
-  describe '#in_journey?' do
-    it 'not in journey initially' do
+    it 'card has a balance of zero' do
+      expect(oystercard.balance).to eq Oystercard::BALANCE
+    end
+    it 'is #in_journey' do
       expect(oystercard.in_journey?).to be false
     end
   end
@@ -37,18 +35,28 @@ describe Oystercard do
 
   context 'when travelling' do
 
-    describe '#touch_in' do
-      it 'can touch in' do
+    describe 'Checking in journey status' do
+      before do
         oystercard.top_up(10) #need stub
         oystercard.touch_in
+      end
+      it 'In journey when touch in' do
         expect(oystercard).to be_in_journey
       end
-      context 'When balance is less than £1' do
-        it 'raises an error' do
+
+      it 'Not in journey anymore when touch out' do
+        oystercard.touch_out
+        expect(oystercard).not_to be_in_journey
+      end
+    end
+  end
+
+    describe 'error messages' do
+      
+        it 'raises an error when balance is less than £1' do
           expect { oystercard.touch_in }.to raise_error 'not enough credit'
         end
       end
-    end
 
     describe '#deduct' do
      it 'respond to deduct with one argument' do
@@ -58,16 +66,4 @@ describe Oystercard do
        expect{ oystercard.deduct 10 }.to change{oystercard.balance}.by -10
      end
    end
-
-
-
-   describe '#touch_out' do
-     it 'can touch out' do
-       oystercard.top_up(10) #need stub
-       oystercard.touch_in
-       oystercard.touch_out
-       expect(oystercard).not_to be_in_journey
-     end
-   end
- end
 end
