@@ -13,6 +13,7 @@ describe Oystercard do
     it 'is #in_journey' do
       expect(oystercard.in_journey?).to be false
     end
+
   end
 
   describe '#top_up' do
@@ -47,12 +48,17 @@ describe Oystercard do
       end
 
       it 'Not in journey anymore when touch out' do
-        oystercard.touch_out(2)
+        oystercard.touch_out(2, station)
         expect(oystercard).not_to be_in_journey
       end
 
+      it 'expects touch out to take exit station as a second argument' do
+        oystercard.touch_out(2, station)
+        expect(oystercard.instance_variable_get(:@exit_station)).to eq station
+      end
+
       it 'check a charge is made when touch out' do
-        expect {oystercard.touch_out(2)}.to change{oystercard.instance_variable_get(:@balance)}.by(-2)
+        expect {oystercard.touch_out(2, station)}.to change{oystercard.instance_variable_get(:@balance)}.by(-2)
       end
     end
   end
@@ -71,7 +77,7 @@ describe Oystercard do
       expect(oystercard.instance_variable_get(:@entry_station)).to eq station
     end
     it 'forgets station argument once touched out' do
-      oystercard.touch_out(2)
+      oystercard.touch_out(2, station)
       expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
     end
   end

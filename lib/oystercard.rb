@@ -6,8 +6,8 @@ MINIMUM_BALANCE = 1
 
   def initialize(balance = BALANCE)
     @balance = balance
-    @in_journey = false
     @entry_station = nil
+    @exit_station = nil
   end
 
   def top_up(amount)
@@ -16,24 +16,23 @@ MINIMUM_BALANCE = 1
   end
 
   def in_journey?
-    @in_journey
+    !@entry_station.nil?
   end
 
   def touch_in(station)
     @entry_station = station
     fail 'below minimum balance' if empty?
-    @in_journey = true
   end
 
-  def touch_out(amount)
+  def touch_out(amount, station)
     @entry_station = nil
+    @exit_station = station 
     deduct(amount)
-    @in_journey = false
   end
 
   private
 
-  attr_reader :balance, :in_journey, :entry_station
+  attr_reader :balance, :entry_station
 
   def deduct(amount)
     @balance -= amount
