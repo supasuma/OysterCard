@@ -18,7 +18,8 @@ MINIMUM_BALANCE = 1
     @in_journey
   end
 
-  def touch_in
+  def touch_in(station)
+    @entry_station = station
     fail 'below minimum balance' if empty?
     @in_journey = true
   end
