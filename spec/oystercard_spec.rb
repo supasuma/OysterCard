@@ -1,11 +1,12 @@
 require 'oystercard'
 
 describe Oystercard do
-  let(:journey_class) {spy('journey_class', :complete => true, :add_penalty_fare => 6 )}
-  subject(:oystercard) {described_class.new(journey_class)}
+  let(:receipt) {{entry: entry_station, exit: exit_station, fare: Journey::MINIMUM_FARE}}
+  let(:journey)  {spy('Journey', :fare => 1, :receipt => receipt )}
+  subject(:oystercard) {described_class.new(journey)}
+
   let(:entry_station) { double :station }
   let(:exit_station) { double :station }
-  let(:receipt) {{entry: entry_station, exit: exit_station, fare: Journey::MINIMUM_FARE}}
 
   describe '#initialize' do
     it 'instantiates with a balance of 0' do
@@ -82,6 +83,8 @@ describe Oystercard do
     end
 
     context 'dealing with penalty fares' do
+      let(:journey)  {spy('Journey', :complete => true, :add_penalty_fare => 6, :fare => 7 )}
+      subject(:oystercard) {described_class.new(journey)}
 
       it 'adds penalty fare on touch out w/o touch in' do
         expect{oystercard.touch_out('Station1')}.to change{oystercard.balance}.by(-7)

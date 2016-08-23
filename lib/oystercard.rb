@@ -6,6 +6,7 @@ class Oystercard
 
   DEFAULT_LIMIT = 90
   DEFAULT_BALANCE = 0
+  MINIMUM_FARE = 1
 
   def initialize(journey_class = Journey)
     @journey = nil
@@ -21,7 +22,7 @@ class Oystercard
   end
 
   def touch_in(station)
-    fail 'Insufficient funds' if balance < @journey_class::MINIMUM_FARE
+    fail 'Insufficient funds' if balance < MINIMUM_FARE
     no_touch_out_penalty unless @journey.nil?
     @journey = @journey_class.new(station)
   end
