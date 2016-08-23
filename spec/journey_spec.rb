@@ -15,7 +15,7 @@ subject(:journey) {described_class.new("station")}
     end
 
     it 'instantiates with the custom minimum fare' do
-      expect(journey.fare).to eq 1
+      expect(journey.fare).to eq Journey::MINIMUM_FARE
     end
 
   end
@@ -35,7 +35,7 @@ subject(:journey) {described_class.new("station")}
     end
 
     it 'expects minimum fare to remain the same' do
-      expect(journey.fare).to eq 1
+      expect(journey.fare).to eq Journey::MINIMUM_FARE
     end
   end
 
@@ -43,9 +43,16 @@ subject(:journey) {described_class.new("station")}
 
     it 'returns single journey data' do
       journey.complete("station2")
-      expect(journey.receipt).to eq ({entry: "station", exit: "station2"})
+      expect(journey.receipt).to eq ({entry: "station", exit: "station2", fare: Journey::MINIMUM_FARE})
     end
 
+  end
+
+  context 'dealing with penalty fares' do
+    it 'adds penalty_fare to fare'do
+      journey.add_penalty_fare
+      expect(journey.fare).to eq (Journey::MINIMUM_FARE + Journey::PENALTY_FARE)
+    end
   end
 
 end

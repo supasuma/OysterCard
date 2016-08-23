@@ -1,34 +1,20 @@
 require 'oystercard'
 
 describe Oystercard do
-  subject(:oystercard) {described_class.new}
+  let(:journey_class) {spy('journey_class', :complete => true, :add_penalty_fare => 6 )}
+  subject(:oystercard) {described_class.new(journey_class)}
   let(:entry_station) { double :station }
   let(:exit_station) { double :station }
-  let(:journey) {{entry: entry_station, exit: exit_station}}
-
+  let(:receipt) {{entry: entry_station, exit: exit_station, fare: Journey::MINIMUM_FARE}}
 
   describe '#initialize' do
     it 'instantiates with a balance of 0' do
       expect(oystercard.balance).to eq described_class::DEFAULT_BALANCE
     end
 
-    it 'has a default limit' do
-      expect(oystercard.limit).to eq described_class::DEFAULT_LIMIT
-    end
-
-    it 'sets a given limit' do
-      oystercard = Oystercard.new 100
-      expect(oystercard.limit).to eq 100
-    end
-
-    it 'sets a given balance' do
-      oystercard = Oystercard.new 100, 50
-      expect(oystercard.balance).to eq 50
-    end
-
     it 'raises an error when instantiated balance is larger than limit' do
-      msg = 'Balance cannot be larger than limit'
-      expect {Oystercard.new 50, 100}.to raise_error msg
+      msg = 'Balance limit reached'
+      expect {oystercard.top_up(100)}.to raise_error msg
     end
 
     it 'has an empty list of journeys by default' do
@@ -57,44 +43,51 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    let(:empty_oyster) {described_class.new(100,0)}
-
-    before do
-      oystercard.top_up(1)
-      oystercard.touch_in(entry_station)
-    end
-
-    # it 'will be aware of journey status' do
-    #   expect(oystercard).to be_in_journey
-    # end
 
     it 'will not touch in if insufficient funds' do
       msg = 'Insufficient funds'
-      expect { empty_oyster.touch_in(entry_station) }.to raise_error msg
+      expect { oystercard.touch_in(entry_station) }.to raise_error msg
     end
+
+    context 'dealing with penalty fares' do
+
+      it 'adds penalty fare on double touch in' do
+        oystercard.top_up(50)
+        oystercard.touch_in('Station1')
+        expect(oystercard.instance_variable_get(:@journey)).to receive(:add_penalty_fare)
+        oystercard.touch_in('Station2')
+      end
+
+    end
+
   end
 
   describe '#touch_out' do
     before do
-      oystercard.top_up(5)
+      oystercard.top_up(50)
       oystercard.touch_in(entry_station)
       oystercard.touch_out(exit_station)
     end
 
-    # it 'will be aware of journey status' do
-    #   expect(oystercard).not_to be_in_journey
-    # end
-
     it 'will deduct fare amount from card balance' do
-      expect(oystercard.balance).to eq 4
+      expect(oystercard.balance).to eq 49
     end
 
-    it 'will forget the entry station after touch out' do
-      expect(oystercard.entry_station).to be_nil
+    it 'will forget the journey  after touch out' do
+      expect(oystercard.instance_variable_get(:@journey)).to be_nil
     end
 
     it 'stores a journey' do
-      expect(oystercard.journeys).to eq([journey])
+      expect(oystercard.journeys).to eq([receipt])
     end
+
+    context 'dealing with penalty fares' do
+
+      it 'adds penalty fare on touch out w/o touch in' do
+        expect{oystercard.touch_out('Station1')}.to change{oystercard.balance}.by(-7)
+      end
+
+    end
+
   end
 end
