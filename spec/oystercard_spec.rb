@@ -2,11 +2,12 @@ require 'oystercard'
 
 describe Oystercard do
     subject(:oystercard) {described_class.new}
+    let(:amount) { double :amount }
 
   describe 'Initializing a card' do
 
     it 'card has a balance of zero' do
-      expect(oystercard.balance).to eq Oystercard::BALANCE
+      expect(oystercard.instance_variable_get(:@balance)).to eq Oystercard::BALANCE
     end
     it 'is #in_journey' do
       expect(oystercard.in_journey?).to be false
@@ -20,7 +21,7 @@ describe Oystercard do
       expect(oystercard).to respond_to(:top_up).with(1).argument
     end
     it 'can increase the balance' do
-      expect{oystercard.top_up 10}.to change{oystercard.balance}.by 10
+      expect{oystercard.top_up 10}.to change{oystercard.instance_variable_get(:@balance)}.by 10
     end
   end
 
@@ -45,29 +46,19 @@ describe Oystercard do
       end
 
       it 'Not in journey anymore when touch out' do
-        oystercard.touch_out
+        oystercard.touch_out(2)
         expect(oystercard).not_to be_in_journey
       end
 
       it 'check a charge is made when touch out' do
-        expect {oystercard.touch_out}.to change{oystercard.balance}.by(2)
+        expect {oystercard.touch_out(2)}.to change{oystercard.instance_variable_get(:@balance)}.by(-2)
       end
     end
   end
 
-    describe 'error messages' do
-
-        it 'raises an error when balance is less than £1' do
-          expect { oystercard.touch_in }.to raise_error 'not enough credit'
-        end
-      end
-
-    describe '#deduct' do
-     it 'respond to deduct with one argument' do
-       expect(oystercard).to respond_to(:deduct).with(1).argument
-     end
-     it 'can decrease the balance' do
-       expect{ oystercard.deduct 10 }.to change{oystercard.balance}.by -10
-     end
-   end
+  describe 'error messages' do
+    it 'raises an error when balance is less than minimum balance' do
+      expect { oystercard.touch_in }.to raise_error 'below minimum balance'
+    end
+  end
 end
