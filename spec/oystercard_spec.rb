@@ -13,6 +13,9 @@ describe Oystercard do
     it 'is #in_journey' do
       expect(oystercard.in_journey?).to be false
     end
+    it 'creates empty array of all journeys' do
+      expect(oystercard.instance_variable_get(:@journeys)).to eq []
+    end
 
   end
 
@@ -81,4 +84,11 @@ describe Oystercard do
       expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
     end
   end
+
+  describe 'mapping journeys'
+    it 'add hash to journeys array when touching in' do
+      oystercard.top_up(20)
+      oystercard.touch_in(station)
+      expect(oystercard.journeys).to_not be_empty
+    end
 end
