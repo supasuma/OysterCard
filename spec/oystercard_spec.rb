@@ -86,9 +86,11 @@ describe Oystercard do
   end
 
   describe 'mapping journeys'
-    it 'add hash to journeys array when touching in' do
+    it 'add hash to journeys array and had entry station key to hash when touching in' do
       oystercard.top_up(20)
       oystercard.touch_in(station)
-      expect(oystercard.journeys).to_not be_empty
+      expect(oystercard.journeys).to end_with({station: nil})
     end
+
+    
 end
