@@ -7,7 +7,4 @@ class Station
     @zone = zone
   end
 
-
-
-
 end

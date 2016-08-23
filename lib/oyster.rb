@@ -24,18 +24,27 @@ class Oyster
   end
 
   def touch_in(entry_station)
-    no_touch_out if @entry_station != nil
+    # no_touch_out if @entry_station != nil
+    # fail "Not enough money on card." if @balance < MINIMUM_FARE
+    # in_journey?
+    # @entry_station = entry_station
+
     fail "Not enough money on card." if @balance < MINIMUM_FARE
+    no_touch_out if @entry_station != nil
+    @current_journey = Journey.new(entry_station)
     in_journey?
-    @entry_station = entry_station
   end
 
   def touch_out(exit_station)
-    record_journey(@entry_station, exit_station)
-    deduct(MINIMUM_FARE)
-    @exit_station = exit_station
+    #record_journey(@entry_station, exit_station)
+    #deduct(MINIMUM_FARE)
+    #@exit_station = exit_station
     @entry_station = nil #must be last line of method (or very near
     in_journey?
+
+    deduct(@current_journey.fare)
+    @current_journey.finish(exit_station)
+    record_journey(@current_journey)
   end
 
   def top_up(amount)
@@ -51,8 +60,9 @@ class Oyster
     @entry_station = nil
   end
 
-  def record_journey(entry_station, exit_station)
-    @journeys << {:entry => entry_station, :exit => exit_station}
+  def record_journey(current_journey)
+    #@journeys << {:entry => entry_station, :exit => exit_station}
+    @journeys << current_journey
   end
 
   def deduct(amount)
