@@ -7,7 +7,7 @@ class Oyster
   STARTING_BALANCE = 0.0
   MAX_BALANCE = 90.0
   MINIMUM_FARE = 1.0
-  PENALTY_FARE = 10.0
+  PENALTY_FARE = 6.0
 
   def initialize(balance = STARTING_BALANCE)
     @balance = balance
@@ -26,8 +26,8 @@ class Oyster
   def touch_in(entry_station)
     no_touch_out if @entry_station != nil
     fail "Not enough money on card." if @balance < MINIMUM_FARE
-    @entry_station = entry_station
     in_journey?
+    @entry_station = entry_station
   end
 
   def touch_out(exit_station)
