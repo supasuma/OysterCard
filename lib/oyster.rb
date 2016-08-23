@@ -1,4 +1,5 @@
-
+require_relative 'station'
+require_relative 'journey'
 
 class Oyster
   attr_reader :balance, :entry_station, :journeys
@@ -26,13 +27,15 @@ class Oyster
     no_touch_out if @entry_station != nil
     fail "Not enough money on card." if @balance < MINIMUM_FARE
     @entry_station = entry_station
+    in_journey?
   end
 
   def touch_out(exit_station)
     record_journey(@entry_station, exit_station)
     deduct(MINIMUM_FARE)
     @exit_station = exit_station
-    @entry_station = nil #must be last line of method (or very near)
+    @entry_station = nil #must be last line of method (or very near
+    in_journey?
   end
 
   def top_up(amount)
