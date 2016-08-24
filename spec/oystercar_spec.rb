@@ -1,7 +1,7 @@
 require 'oyster.rb'
 
 describe Oyster do
-  let(:station) {double :station}
+  let(:station) {double :station, zone: 1}
 
   context 'initialize' do
     it 'is initialised with a balence of 0' do
@@ -55,4 +55,22 @@ describe Oyster do
       expect{subject.touch_out(station)}.to change{subject.balance}.by -7
     end
 
+<<<<<<< HEAD
+=======
+  context '#journeys' do
+
+    let(:station2) {double :station2, zone: 1}
+
+    it "returns an empty list of journeys on ititialization" do
+      expect(subject.journeys).to eq([])
+    end
+
+    it "creates a entry and exit hash within journey" do
+      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
+      subject.touch_in(station)
+      subject.touch_out(station2)
+      expect(subject.journeys).to include({:entry => station, :exit => station2})
+    end
+  end
+>>>>>>> 452f4814465110fbf7835b75af94cde7bd24fa9c
 end
