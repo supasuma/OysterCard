@@ -21,5 +21,5 @@ class Journey
     MINIMUM_FARE + (@entry_station.zone - @exit_station.zone).abs
   end
 
-
+  
 end
