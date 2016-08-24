@@ -1,3 +1,6 @@
+require_relative 'station'
+require_relative 'journey'
+
 class Oystercard
 
 attr_accessor :journeys
@@ -22,10 +25,9 @@ MINIMUM_BALANCE = 1
     @entry_station = station
   end
 
-  def touch_out(amount, station)
+  def touch_out(station)
     @exit_station = station
-    deduct(amount)
-    @entry_station = nil
+#    deduct(amount)
   end
 
   private
