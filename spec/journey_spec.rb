@@ -9,7 +9,7 @@ describe Journey do
   end
 
   it "changes the in_journey status to true when journey starts" do
-    subject.start
+    subject.start(station)
     expect(subject).to be_in_journey
   end
 
@@ -23,4 +23,8 @@ describe Journey do
     expect(subject.instance_variable_get(:@start_station)).to eq station
   end
 
+  it 'stores exit station when finishing the journey' do
+    subject.finish(station)
+    expect(subject.instance_variable_get(:@end_station)).to eq station
+  end
 end

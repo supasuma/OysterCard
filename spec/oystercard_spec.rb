@@ -77,13 +77,13 @@ describe Oystercard do
       oystercard.top_up(20)
       oystercard.touch_in(station)
     end
-    it 'stores station argument in @entry_station' do
-      expect(oystercard.instance_variable_get(:@entry_station)).to eq station
-    end
-    it 'forgets station argument once touched out' do
-      oystercard.touch_out(2, station)
-      expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
-    end
+    # it 'stores station argument in @entry_station' do
+    #   expect(oystercard.instance_variable_get(:@entry_station)).to eq station
+    # end
+    # it 'forgets station argument once touched out' do
+    #   oystercard.touch_out(2, station)
+    #   expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
+    # end
   end
 
   describe 'mapping journeys' do
