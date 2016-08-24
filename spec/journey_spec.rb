@@ -31,4 +31,10 @@ describe Journey do
   it 'creates empty array of all journeys' do
     expect(subject.instance_variable_get(:@journeys)).to eq []
   end
+
+  it 'creates a hash inside an @journey array for each journey with entry station and exit station' do
+    subject.start(station)
+    subject.finish(station)
+    expect(subject.instance_variable_get(:@journeys)[-1]).to include(:in => station, :out => station)
+  end
 end

@@ -16,7 +16,7 @@ describe Oystercard do
     # end
     # it 'creates empty array of all journeys' do
     #   expect(oystercard.instance_variable_get(:@journeys)).to eq []
-    end
+    #end
 
   end
 
@@ -56,10 +56,10 @@ describe Oystercard do
       #   expect(oystercard).not_to be_in_journey
       # end
 
-      it 'expects touch out to take exit station as a second argument' do
-        oystercard.touch_out(2, station)
-        expect(oystercard.instance_variable_get(:@exit_station)).to eq station
-      end
+      # it 'expects touch out to take exit station as a second argument' do
+      #   oystercard.touch_out(2, station)
+      #   expect(oystercard.instance_variable_get(:@exit_station)).to eq station
+      # end
 
       it 'check a charge is made when touch out' do
         expect {oystercard.touch_out(2, station)}.to change{oystercard.instance_variable_get(:@balance)}.by(-2)
@@ -72,19 +72,19 @@ describe Oystercard do
       expect { oystercard.touch_in(station) }.to raise_error 'below minimum balance'
     end
   end
-  describe 'add station to card when touching in' do
-    before do
-      oystercard.top_up(20)
-      oystercard.touch_in(station)
-    end
-    # it 'stores station argument in @entry_station' do
-    #   expect(oystercard.instance_variable_get(:@entry_station)).to eq station
-    # end
-    # it 'forgets station argument once touched out' do
-    #   oystercard.touch_out(2, station)
-    #   expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
-    # end
-  end
+  # describe 'add station to card when touching in' do
+  #   before do
+  #     oystercard.top_up(20)
+  #     oystercard.touch_in(station)
+  #   end
+  #   # it 'stores station argument in @entry_station' do
+  #   #   expect(oystercard.instance_variable_get(:@entry_station)).to eq station
+  #   # end
+  #   # it 'forgets station argument once touched out' do
+  #   #   oystercard.touch_out(2, station)
+  #   #   expect(oystercard.instance_variable_get(:@entry_station)).to be_nil
+  #   # end
+  # end
 
   describe 'mapping journeys' do
     before do

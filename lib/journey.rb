@@ -6,6 +6,7 @@ class Journey
     @in_journey = false
     @start_station = nil
     @end_station = nil
+    @journeys = []
   end
 
   def in_journey?
