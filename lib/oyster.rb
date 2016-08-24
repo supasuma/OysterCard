@@ -2,7 +2,7 @@ require_relative 'station'
 require_relative 'journey'
 
 class Oyster
-  attr_reader :balance, :entry_station, :journeys
+  attr_reader :balance, :journeys
 
   STARTING_BALANCE = 0.0
   MAX_BALANCE = 90.0
@@ -16,7 +16,7 @@ class Oyster
   end
 
   def in_journey?
-    if @entry_station == nil
+    if @current_journey  == nil
       @in_journey = false
     else
       @in_journey = true
@@ -30,7 +30,7 @@ class Oyster
     # @entry_station = entry_station
 
     fail "Not enough money on card." if @balance < MINIMUM_FARE
-    no_touch_out if @entry_station != nil
+    no_touch_out if @current_journey  != nil
     @current_journey = Journey.new(entry_station)
     in_journey?
   end
@@ -39,12 +39,11 @@ class Oyster
     #record_journey(@entry_station, exit_station)
     #deduct(MINIMUM_FARE)
     #@exit_station = exit_station
-    @entry_station = nil #must be last line of method (or very near
-    in_journey?
-
+    no_touch_in(exit_station) if @current_journey.nil?
     deduct(@current_journey.fare)
-    @current_journey.finish(exit_station)
-    record_journey(@current_journey)
+    record_journey(@current_journey.finish(exit_station))
+    @current_journey  = nil #must be last line of method (or very near
+    in_journey?
   end
 
   def top_up(amount)
@@ -54,10 +53,15 @@ class Oyster
 
   private
 
-  def no_touch_out #if the person did not touch out of last journey
-    record_journey(@entry_station, nil)
+  def no_touch_in(exit_station)
+    @current_journey = Journey.new(nil)
     deduct(PENALTY_FARE)
-    @entry_station = nil
+  end
+
+  def no_touch_out #if the person did not touch out of last journey
+    record_journey(@current_journey.finish(nil))
+    deduct(PENALTY_FARE)
+    @current_journey  = nil
   end
 
   def record_journey(current_journey)
