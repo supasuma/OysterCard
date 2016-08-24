@@ -52,10 +52,12 @@ describe Oystercard do
   end
 
   describe 'interaction with Journey class' do
-    let(:journey_class) {double :journey_class, new: journey}
+    #let(:Journey) {double :Journey, new: journey}
+    let(:Journey) {double :Journey}
     let(:journey) {double :journey, start: nil}
 
     it 'creates a new journey on touch in' do
+      allow(Journey).to receive(:new) {journey}
       subject.top_up(20)
       subject.touch_in(station)
       expect(journey).to have_received(:start)

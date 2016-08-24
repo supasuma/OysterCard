@@ -23,6 +23,8 @@ MINIMUM_BALANCE = 1
   def touch_in(station)
     fail 'below minimum balance' if empty?
     @entry_station = station
+    Journey.new.start(station)
+
   end
 
   def touch_out(station)
