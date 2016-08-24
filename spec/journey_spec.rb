@@ -2,18 +2,18 @@ require 'journey'
 
 describe Journey do
 
-  let(:station) {double(:station, :zone1)}
+  let(:station) {double(:station)}
+  let(:exit_station) {double (:station)}
+  subject(:journey) {described_class.new(station)}
 
-  it "knows if a journey is not complete" do
-    expect(subject).not_to be_complete
-  end
 
   it "has a penalty far by default" do
-    expect(subject.fare).to eq Journey::PENALTY_FARE
+    expect(journey.fare).to eq Journey::MINIMUM_FARE
   end
 
   it "returns itself when finishing a journey" do
-    expect(subject.finish).to eq subject
+    hash = {:entry => station, :exit => exit_station}
+    expect(journey.finish(exit_station)).to eq hash
   end
 
 end

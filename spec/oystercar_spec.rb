@@ -19,13 +19,6 @@ describe Oyster do
     end
   end
 
-# taken out as method was moved to private
-  # context '#deduct' do
-  #   it 'will deduct the balance by a given amount' do
-  #     expect{subject.deduct(10)}.to change{subject.balance}.by -10
-  #   end
-  # end
-
   context '#in_journey?' do
     it 'starts out as not being on a journey' do
       expect(subject.in_journey?).to eq(false)
@@ -39,18 +32,25 @@ describe Oyster do
   end
 
   context '#touch_in' do
-    it 'is possible to touch_in' do
-      expect(subject).to respond_to(:touch_in)
-    end
-
     it "wont run touch in unless balance is at >= minimum fare." do
       expect{subject.touch_in(station)}.to raise_error "Not enough money on card."
     end
 
-    it 'changes the station var to the touch in station' do
-      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
-      expect(subject.touch_in(station)).to eq(subject.entry_station)
+    context 'actual journey' do
+
+      before do
+        subject.top_up(Oyster::MINIMUM_FARE)
+        subject.touch_in(station)
+      end
+
+    it 'changes the currnt journey to a new journey' do
+      expect(subject.instance_variable_get(:@current_journey)).not_to eq nil
     end
+
+    it 'should raise penalty fare if already touched in' do
+      expect{subject.touch_in(station)}.to change{subject.balance}.by -6
+    end
+  end
   end
 
   context '#touch_out' do
@@ -67,6 +67,9 @@ describe Oyster do
       expect{subject.touch_out(station)}.to change{subject.balance}.by -Oyster::MINIMUM_FARE
     end
   end
+    it 'should raise penalty fare if touching out without touching in' do
+      expect{subject.touch_out(station)}.to change{subject.balance}.by -7
+    end
 
   context '#journeys' do
 
