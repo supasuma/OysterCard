@@ -55,8 +55,6 @@ describe Oyster do
       expect{subject.touch_out(station)}.to change{subject.balance}.by -7
     end
 
-<<<<<<< HEAD
-=======
   context '#journeys' do
 
     let(:station2) {double :station2, zone: 1}
@@ -72,5 +70,5 @@ describe Oyster do
       expect(subject.journeys).to include({:entry => station, :exit => station2})
     end
   end
->>>>>>> 452f4814465110fbf7835b75af94cde7bd24fa9c
+
 end
