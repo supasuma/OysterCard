@@ -9,10 +9,11 @@ LIMIT = 90
 BALANCE = 0
 MINIMUM_BALANCE = 1
 
-  def initialize(balance = BALANCE)
+  def initialize(balance = BALANCE, journey = Journey.new)
     @balance = balance
     @entry_station = nil
     @exit_station = nil
+    @current_journey = journey
   end
 
   def top_up(amount)
@@ -23,12 +24,14 @@ MINIMUM_BALANCE = 1
   def touch_in(station)
     fail 'below minimum balance' if empty?
     @entry_station = station
-    Journey.new.start(station)
+    #@current_journey = Journey.new
+    @current_journey.start(station)
 
   end
 
   def touch_out(station)
     @exit_station = station
+    @current_journey.finish(station)
 #    deduct(amount)
   end
 

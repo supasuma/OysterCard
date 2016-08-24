@@ -58,12 +58,14 @@ describe Oystercard do
 
     it 'creates a new journey on touch in' do
       allow(Journey).to receive(:new) {journey}
+      p journey
       subject.top_up(20)
       subject.touch_in(station)
       expect(journey).to have_received(:start)
     end
 
     it 'sends a finish message to journey class' do
+      allow(Journey).to receive(:new) {journey}
       subject.top_up(20)
       subject.touch_out(station)
       expect(journey).to have_received(:finish)
