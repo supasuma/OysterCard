@@ -51,10 +51,10 @@ describe Oystercard do
       #   expect(oystercard.in_journey?).to eq true
       # end
 
-      it 'Not in journey anymore when touch out' do
-        oystercard.touch_out(2, station)
-        expect(oystercard).not_to be_in_journey
-      end
+      # it 'Not in journey anymore when touch out' do
+      #   oystercard.touch_out(2, station)
+      #   expect(oystercard).not_to be_in_journey
+      # end
 
       it 'expects touch out to take exit station as a second argument' do
         oystercard.touch_out(2, station)

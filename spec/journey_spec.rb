@@ -10,4 +10,10 @@ describe Journey do
     subject.start
     expect(subject).to be_in_journey
   end
+
+  it 'Not in journey anymore when touch out' do
+    subject.finish
+    expect(subject).not_to be_in_journey
+  end
+
 end
