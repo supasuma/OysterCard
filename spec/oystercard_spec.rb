@@ -11,9 +11,9 @@ describe Oystercard do
     it 'card has a balance of zero' do
       expect(oystercard.instance_variable_get(:@balance)).to eq Oystercard::BALANCE
     end
-    it 'is #in_journey' do
-      expect(oystercard.in_journey?).to be false
-    end
+    # it 'is #in_journey' do
+    #   expect(oystercard.in_journey?).to be false
+    # end
     it 'creates empty array of all journeys' do
       expect(oystercard.instance_variable_get(:@journeys)).to eq []
     end
