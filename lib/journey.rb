@@ -8,7 +8,7 @@ class Journey
 
   def initialize(entry_station)
     @entry_station = entry_station
-    @exit_station = ""
+    @exit_station = nil
   end
 
   def finish(exit_station)
@@ -17,7 +17,8 @@ class Journey
   end
 
   def fare
-    MINIMUM_FARE
+    return MINIMUM_FARE if entry_station.nil? || exit_station.nil?
+    MINIMUM_FARE + (@entry_station.zone - @exit_station.zone).abs
   end
 
 end

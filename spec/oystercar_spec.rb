@@ -1,7 +1,7 @@
 require 'oyster.rb'
 
 describe Oyster do
-  let(:station) {double :station}
+  let(:station) {double :station, zone: 1}
 
   context 'initialize' do
     it 'is initialised with a balence of 0' do
@@ -73,7 +73,7 @@ describe Oyster do
 
   context '#journeys' do
 
-    let(:station2) {double :station2}
+    let(:station2) {double :station2, zone: 1}
 
     it "returns an empty list of journeys on ititialization" do
       expect(subject.journeys).to eq([])
