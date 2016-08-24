@@ -1,7 +1,6 @@
 require_relative 'oystercard'
-
+# => Knows everything about a journey
 class Journey
-
 
   def initialize
     @in_journey = false
@@ -15,9 +14,13 @@ class Journey
     self.in_journey = true
   end
 
+  def finish
+    self.in_journey = false
+  end
+
+
 private
-attr_accessor :in_journey
 
-
+  attr_accessor :in_journey
 
 end
