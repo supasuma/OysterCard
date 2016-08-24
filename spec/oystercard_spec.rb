@@ -86,19 +86,19 @@ describe Oystercard do
   #   # end
   # end
 
-  describe 'mapping journeys' do
-    before do
-      oystercard.top_up(20)
-      oystercard.touch_in(station)
-    end
-    it 'add hash to journeys array and had entry station key to hash when touching in' do
-      expect(oystercard.journeys).to end_with({station => nil})
-    end
-    it 'exit station to hash when touching out' do
-      oystercard.touch_out(2,station2)
-      expect(oystercard.journeys).to end_with({station => station2})
-    end
-  end
+  # describe 'mapping journeys' do
+  #   before do
+  #     oystercard.top_up(20)
+  #     oystercard.touch_in(station)
+  #   end
+  #   it 'add hash to journeys array and had entry station key to hash when touching in' do
+  #     expect(oystercard.journeys).to end_with({station => nil})
+  #   end
+  #   it 'exit station to hash when touching out' do
+  #     oystercard.touch_out(2,station2)
+  #     expect(oystercard.journeys).to end_with({station => station2})
+  #   end
+  # end
 
 
 end

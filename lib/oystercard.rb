@@ -10,7 +10,6 @@ MINIMUM_BALANCE = 1
     @balance = balance
     @entry_station = nil
     @exit_station = nil
-    @journeys = []
   end
 
   def top_up(amount)
@@ -18,19 +17,13 @@ MINIMUM_BALANCE = 1
     @balance += amount
   end
 
-  def in_journey?
-    !@entry_station.nil?
-  end
-
   def touch_in(station)
     fail 'below minimum balance' if empty?
     @entry_station = station
-    @journeys << {@entry_station => nil}
   end
 
   def touch_out(amount, station)
     @exit_station = station
-    @journeys[-1][@entry_station] = station
     deduct(amount)
     @entry_station = nil
   end

@@ -16,11 +16,13 @@ class Journey
   def start(station)
     self.in_journey = true
     @start_station = station
+    @journeys << {in: station}
   end
 
   def finish(station)
     self.in_journey = false
     @end_station = station
+    @journeys[-1][:out] = station
   end
 
 
