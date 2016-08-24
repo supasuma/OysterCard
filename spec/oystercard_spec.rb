@@ -53,14 +53,20 @@ describe Oystercard do
 
   describe 'interaction with Journey class' do
     #let(:Journey) {double :Journey, new: journey}
-    let(:Journey) {double :Journey}
-    let(:journey) {double :journey, start: nil}
+    let(:Journey) {double :Journey }
+    let(:journey) {double :journey, start: nil, finish: nil}
 
     it 'creates a new journey on touch in' do
       allow(Journey).to receive(:new) {journey}
       subject.top_up(20)
       subject.touch_in(station)
       expect(journey).to have_received(:start)
+    end
+
+    it 'sends a finish message to journey class' do
+      subject.top_up(20)
+      subject.touch_out(station)
+      expect(journey).to have_received(:finish)
     end
   end
 
