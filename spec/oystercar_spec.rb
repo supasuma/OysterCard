@@ -19,18 +19,6 @@ describe Oyster do
     end
   end
 
-  context '#in_journey?' do
-    it 'starts out as not being on a journey' do
-      expect(subject.in_journey?).to eq(false)
-    end
-
-    it 'changes to being on a journey when you touch in' do
-      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
-      subject.touch_in(station)
-      expect(subject.in_journey?).to eq(true)
-    end
-  end
-
   context '#touch_in' do
     it "wont run touch in unless balance is at >= minimum fare." do
       expect{subject.touch_in(station)}.to raise_error "Not enough money on card."
@@ -42,10 +30,6 @@ describe Oyster do
         subject.top_up(Oyster::MINIMUM_FARE)
         subject.touch_in(station)
       end
-
-    it 'changes the currnt journey to a new journey' do
-      expect(subject.instance_variable_get(:@current_journey)).not_to eq nil
-    end
 
     it 'should raise penalty fare if already touched in' do
       expect{subject.touch_in(station)}.to change{subject.balance}.by -6
@@ -71,19 +55,4 @@ describe Oyster do
       expect{subject.touch_out(station)}.to change{subject.balance}.by -7
     end
 
-  context '#journeys' do
-
-    let(:station2) {double :station2}
-
-    it "returns an empty list of journeys on ititialization" do
-      expect(subject.journeys).to eq([])
-    end
-
-    it "creates a entry and exit hash within journey" do
-      subject.top_up(Oyster::MINIMUM_FARE) #Will raise error without first adding balance.
-      subject.touch_in(station)
-      subject.touch_out(station2)
-      expect(subject.journeys).to include({:entry => station, :exit => station2})
-    end
-  end
 end

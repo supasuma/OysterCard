@@ -8,12 +8,17 @@ let(:journey) {double(:journey, finish: {:entry => station, :exit => exit_statio
 
 subject(:journeylog) {described_class.new(journey_class)}
 
-
-
 describe '#start' do
   it 'should create new journeys' do
     journeylog.start(station)
     expect(journeylog.instance_variable_get(:@current_journey)).not_to be_nil
+  end
+end
+
+describe '#reset' do
+  it 'should reset the current_journey' do
+    journeylog.reset
+    expect(journeylog.instance_variable_get(:@current_journey)).to eq nil
   end
 end
 
