@@ -27,6 +27,10 @@ describe Oystercard do
 
   describe '#touch_in' do
 
+    before(:each) do
+      card.top_up(10)
+    end
+
     it 'raises error if balance is less than minimum required' do
       msg = "Insufficient funds. Please top up."
       expect{ empty_card.touch_in(entry) }.to raise_error msg
@@ -45,12 +49,16 @@ describe Oystercard do
 
   describe '#touch_out' do
 
+    before(:each) do
+      card.top_up(10)
+    end
 
     it 'returns true when card touched out' do
       expect(card).to_not be_in_journey
     end
 
     it 'deducts fare when touching out' do
+      card.touch_in(entry)
       expect { card.touch_out(exit)}.to change { card.balance }.by( -Oystercard::MINIMUM_FARE)
     end
 
@@ -59,12 +67,12 @@ describe Oystercard do
     end
 
     it 'charges penality fare if card is touched out without being touched in' do
-    expect { card.touch_out }.to change { card.blance }.by( -Oystercard::PENALTY_FARE)
+    expect { card.touch_out(exit) }.to change { card.balance }.by( -Oystercard::PENALTY_FARE)
     end
 
     it 'charges minimum fare if card is touched in and touched out' do
-    card.touch_in
-    expect { card.touch_out }.to change { card.blance }.by( -Oystercard::MINIMUM_FARE)
+    card.touch_in(entry)
+    expect { card.touch_out(exit) }.to change { card.balance }.by( -Oystercard::MINIMUM_FARE)
     end
   end
 
@@ -75,6 +83,10 @@ describe Oystercard do
   end
 
   describe '#journeys' do
+    before(:each) do
+      card.top_up(10)
+    end
+
     let(:journey){ {entry_station: entry, exit_station: exit} }
     it 'Has an empty list of journeys by default' do
       expect(card.journeys).to be_empty
