@@ -12,7 +12,8 @@ class Journey
   end
 
   def finish(exit_station)
-    {:entry => @entry_station, :exit => exit_station}
+    @exit_station = exit_station
+    {:entry => @entry_station, :exit => @exit_station}
   end
 
   def fare
