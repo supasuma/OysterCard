@@ -1,9 +1,10 @@
 class Station
+  attr_reader :name, :zone
 
-attr_reader :name, :zone
-
-  def initialize(name: name, zone: zone)
+  def initialize(name)
     @name = name
-    @zone = zone
+    @stations_zones = {:Aldgate => 1, :Ladbroke_Grove => 2}
+    @zone = stations_zones[:name]
   end
+
 end
