@@ -17,7 +17,9 @@ class Journey
   end
 
   def fare
-    MINIMUM_FARE
+    return MINIMUM_FARE if entry_station.nil? || exit_station.nil?
+    MINIMUM_FARE + (@entry_station.zone - @exit_station.zone).abs
   end
+
 
 end
