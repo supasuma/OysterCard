@@ -26,7 +26,6 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-
     before(:each) do
       card.top_up(10)
     end
