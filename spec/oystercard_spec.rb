@@ -7,9 +7,6 @@ describe Oystercard do
   let(:entry) { double :station }
   let(:exit) { double :station }
 
-  before do
-    card.top_up(20)
-  end
 
   it 'Describes an account when it is first opened' do
     expect(empty_card.balance).to eq (0)
@@ -48,23 +45,27 @@ describe Oystercard do
 
   describe '#touch_out' do
 
-    before(:each) do
-      card.touch_in(entry)
-      card.touch_out(exit)
-    end
 
     it 'returns true when card touched out' do
       expect(card).to_not be_in_journey
     end
 
     it 'deducts fare when touching out' do
-      expect { card.touch_out(exit)}.to change { card.balance }.by( -Oystercard::MINIMUM_LIMIT)
+      expect { card.touch_out(exit)}.to change { card.balance }.by( -Oystercard::MINIMUM_FARE)
     end
 
     it 'forgets entry_station on touch out' do
       expect(card.entry_station).to eq nil
     end
 
+    it 'charges penality fare if card is touched out without being touched in' do
+    expect { card.touch_out }.to change { card.blance }.by( -Oystercard::PENALTY_FARE)
+    end
+
+    it 'charges minimum fare if card is touched in and touched out' do
+    card.touch_in
+    expect { card.touch_out }.to change { card.blance }.by( -Oystercard::MINIMUM_FARE)
+    end
   end
 
   describe '#in_journey' do
