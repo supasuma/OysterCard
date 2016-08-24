@@ -14,7 +14,7 @@ describe Journey do
   end
 
   it 'isn\'t in journey anymore when touch out' do
-    subject.finish
+    subject.finish(station)
     expect(subject).not_to be_in_journey
   end
 
@@ -26,5 +26,9 @@ describe Journey do
   it 'stores exit station when finishing the journey' do
     subject.finish(station)
     expect(subject.instance_variable_get(:@end_station)).to eq station
+  end
+
+  it 'creates empty array of all journeys' do
+    expect(subject.instance_variable_get(:@journeys)).to eq []
   end
 end
