@@ -9,36 +9,22 @@ class Oystercard
 
   attr_reader :balance
 
-  def initialize
+  def initialize(journey_log = JourneyLog.new)
     @balance = 0
-    @current_journey = nil
-    @journey_history = []
+    @journey_log = journey_log
   end
-
-
 
   def touch_in(station_name)
     fail "Insufficient funds. Please top up." if @balance < MINIMUM_FARE + PENALTY_FARE
-
-    if @current_journey
-      deduct(PENALTY_FARE)
-      record_journey(@current_journey)
-      @current_journey = nil
-    end
+    no_touch_out if @journey_log.in_journey?
     start_journey(station_name)
   end
 
 
   def touch_out(station)
-    if @current_journey
-      @current_journey.finish(station)
-      deduct(@current_journey.fare)
-    else
-      @current_journey = Journey.new(nil)
-      @current_journey.finish(station)
-      deduct(PENALTY_FARE + @current_journey.fare)
-    end
-    end_journey
+    no_touch_in(station) if !@journey_log.in_journey?
+    @journey_log.finish(station)
+    deduct(@journey_log.get_last_fare)
   end
 
   def top_up(amount)
@@ -48,20 +34,22 @@ class Oystercard
 
   private
 
-  def end_journey
-    record_journey(@current_journey)
-    @current_journey = nil
+  def no_touch_in(station)
+    @journey_log.start(nil)
+    deduct(PENALTY_FARE)
+  end
+
+  def no_touch_out
+    deduct(PENALTY_FARE)
+    @journey_log.finish(nil)
   end
 
   def start_journey(station)
-    @current_journey = Journey.new(station)
+    @journey_log.start(station)
   end
 
   def deduct(amount)
     @balance -= amount
   end
 
-  def record_journey(journey)
-    @journey_history << journey
-  end
 end

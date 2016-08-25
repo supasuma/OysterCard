@@ -16,6 +16,14 @@ class JourneyLog
     reset_journey
   end
 
+  def in_journey?
+    !!current_journey
+  end
+
+  def get_last_fare
+    @journey_history[-1].fare
+  end
+
   private
 
   attr_reader :current_journey, :journey_history

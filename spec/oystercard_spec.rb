@@ -3,7 +3,8 @@ require 'oystercard'
 describe Oystercard do
 
   subject(:empty_card) { described_class.new }
-  subject(:card) { described_class.new }
+  subject(:card) { described_class.new(journey_log) }
+  let(:journey_log) {double :JourneyLog, get_last_fare: 1, in_journey?: true, start: nil, finish: nil}
   let(:entry) { double :station }
   let(:exit) { double :station }
 
@@ -25,6 +26,8 @@ describe Oystercard do
     end
   end
 
+
+
   describe '#touch_in' do
     before(:each) do
       card.top_up(10)
@@ -36,8 +39,8 @@ describe Oystercard do
     end
 
     it 'returns true when card touched in' do
+      expect(card.instance_variable_get(:@journey_log)).to receive(:start).with(entry)
       card.touch_in(entry)
-      expect(card.instance_variable_get(:@current_journey)).not_to be_nil
     end
   end
 
@@ -49,8 +52,8 @@ describe Oystercard do
     end
 
     it 'returns true when card touched out' do
+      expect(card.instance_variable_get(:@journey_log)).to receive(:finish).with(exit)
       card.touch_out(exit)
-      expect(card.instance_variable_get(:@current_journey)).to be_nil
     end
 
     it 'charges minimum fare if card is touched in and touched out' do
@@ -59,32 +62,20 @@ describe Oystercard do
 
   end
   context 'charging penality fares' do
+    before do
+      card.top_up(50)
+    end
+
   it 'charges penality fare if card is touched out without being touched in' do
-    card.top_up(10)
+    allow(journey_log).to receive(:in_journey?).and_return(false)
       expect { card.touch_out(exit) }.to change { card.balance }.by( -(Oystercard::PENALTY_FARE + Oystercard::MINIMUM_FARE))
   end
+
+  it 'should charge penalty on double touch in ' do
+    allow(journey_log).to receive(:in_journey?).and_return(true)
+    expect { card.touch_in(entry) }.to change { card.balance }.by( -(Oystercard::PENALTY_FARE))
   end
+end
 
-  describe '#in_journey' do
-    it 'card initializes with not in journey' do
-      expect(card.instance_variable_get(:@current_journey)).to be_nil
-    end
-  end
 
-  describe '#journeys' do
-    before(:each) do
-      card.top_up(10)
-    end
-
-    let(:journey){ {entry_station: entry, exit_station: exit} }
-    it 'Has an empty list of journeys by default' do
-      expect(card.instance_variable_get(:@journey_history)).to be_empty
-    end
-
-    it 'records a journey' do
-      card.touch_in(entry)
-      card.touch_out(exit)
-      expect(card.instance_variable_get(:@journey_history)).not_to be_empty
-    end
-  end
 end

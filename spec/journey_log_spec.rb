@@ -14,6 +14,11 @@ describe JourneyLog do
     it 'does not have a current journey saved' do
       expect(journey_log.instance_variable_get(:@current_journey)).to be_nil
     end
+    describe 'in_journey?' do
+      it 'Is in journey' do
+        expect(journey_log.in_journey?).to be false
+      end
+    end
   end
 
   describe 'start' do
@@ -25,6 +30,12 @@ describe JourneyLog do
     end
     it 'saves the current journey' do
       expect(journey_log.instance_variable_get(:@current_journey)).to eq journey
+    end
+
+    describe 'in_journey?' do
+      it 'Is in journey' do
+        expect(journey_log.in_journey?).to be true
+      end
     end
   end
 
@@ -44,6 +55,12 @@ describe JourneyLog do
     it 'resets current_journey' do
       expect(journey_log.instance_variable_get(:@current_journey)).to be_nil
     end
+    describe 'in_journey?' do
+      it 'Is in journey' do
+        expect(journey_log.in_journey?).to be false
+      end
+    end
+
   end
 
 end
