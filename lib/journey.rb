@@ -3,36 +3,41 @@ require_relative 'oystercard'
 class Journey
 
   MINIMUM_FARE = 1
+  PENALTY_FARE = 6
 
   def initialize
-    @in_journey = false
-    @start_station = nil
-    @end_station = nil
-    @journeys = []
+    @current_journey = {}
   end
 
-  def in_journey?
-    in_journey
+  def complete?
+
+    case
+    when !!current_journey[:in] && !!current_journey[:out]
+      true
+    when !current_journey[:in] && !current_journey[:out]
+      true
+    when !!current_journey[:in] && !current_journey[:out]
+      false
+    when !current_journey[:in] && !!current_journey[:out]
+      false
+    end
+
   end
 
   def start(station)
-    self.in_journey = true
-    @start_station = station
-    @journeys << {in: station}
+    @current_journey[:in] = station
   end
 
   def finish(station)
-    self.in_journey = false
-    @end_station = station
-    @journeys[-1][:out] = station
+    @current_journey[:out] = station
   end
 
   def fare
-    in_journey? ? nil : MINIMUM_FARE
+    complete? ? MINIMUM_FARE : PENALTY_FARE
   end
 
 private
 
-  attr_accessor :in_journey
+attr_reader :current_journey
 
 end
