@@ -7,39 +7,36 @@ class Oystercard
   PENALTY_FARE = 6
   MAXIMUM_LIMIT = 90
 
+  attr_reader :balance
+
   def initialize
     @balance = 0
-    @in_journey = false
-    @journey_history = JourneyHistory.new
+    @current_journey = nil
+    @journey_history = []
   end
 
 
 
   def touch_in(station_name)
-    fail "You don't have enough money on your card" if @balance < MINIMUM_FARE
-    # station = Station.new(station_name)
-      station = station_name #this is temp before we get the stations integrated
+    fail "Insufficient funds. Please top up." if @balance < MINIMUM_FARE
 
-    if @in_journey == true
-      @current_journey.exit_station_is(nil)
+    if @current_journey
       deduct(PENALTY_FARE)
-      @current_journey.fare_is(PENALTY_FARE)
-      @journey_history.record_journey(@current_journey)
+      record_journey(@current_journey)
+      @current_journey = nil
     end
-    start_journey(station)
+    start_journey(station_name)
   end
 
 
   def touch_out(station)
-    if @in_journey == true
-      @current_journey.exit_station_is(station)
-      @current_journey.fare_is(MINIMUM_FARE)
-      deduct(MINIMUM_FARE)
-    else #have not touched in but are now touching out
-      @current_journey = Journey.new(nil) #sets entry station to nil
-      @current_journey.exit_station_is(station)
-      @current_journey.fare_is(PENALTY_FARE)
-      deduct(PENALTY_FARE)
+    if @current_journey
+      @current_journey.finish(station)
+      deduct(@current_journey.fare)
+    else
+      @current_journey = Journey.new(nil)
+      @current_journey.finish(station)
+      deduct(PENALTY_FARE + @current_journey.fare)
     end
     end_journey
   end
@@ -52,16 +49,19 @@ class Oystercard
   private
 
   def end_journey
-    @journey_history.record_journey(@current_journey)
-    @in_journey = false
+    record_journey(@current_journey)
+    @current_journey = nil
   end
 
   def start_journey(station)
     @current_journey = Journey.new(station)
-    @in_journey = true
   end
 
   def deduct(amount)
     @balance -= amount
+  end
+
+  def record_journey(journey)
+    @journey_history << journey
   end
 end
