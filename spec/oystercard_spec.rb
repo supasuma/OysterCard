@@ -1,10 +1,12 @@
 require 'oystercard'
 
 describe Oystercard do
-    subject(:oystercard) {described_class.new}
-    let(:amount) { double :amount }
-    let(:station) { double :station }
-    let(:station2) { double :station2 }
+      let(:journey) {double :journey, start: nil, finish: nil}
+      let(:journey_class_double) {double :journey_class_double, new: journey}
+      subject(:oystercard) {described_class.new(journey: journey_class_double)}
+      let(:amount) { double :amount }
+      let(:station) { double :station }
+      let(:station2) { double :station2 }
 
   describe 'Initializing a card' do
 
@@ -52,20 +54,14 @@ describe Oystercard do
   end
 
   describe 'interaction with Journey class' do
-    #let(:Journey) {double :Journey, new: journey}
-    let(:Journey) {double :Journey }
-    let(:journey) {double :journey, start: nil, finish: nil}
 
-    it 'creates a new journey on touch in' do
-      allow(Journey).to receive(:new) {journey}
-      p journey
-      subject.top_up(20)
-      subject.touch_in(station)
-      expect(journey).to have_received(:start)
-    end
+      it 'creates a new journey on touch in' do
+        subject.top_up(20)
+        subject.touch_in(station)
+        expect(journey).to have_received(:start)
+      end
 
     it 'sends a finish message to journey class' do
-      allow(Journey).to receive(:new) {journey}
       subject.top_up(20)
       subject.touch_out(station)
       expect(journey).to have_received(:finish)
