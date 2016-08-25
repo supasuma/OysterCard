@@ -1,4 +1,4 @@
-require_relative 'JourneyHistory.rb'
+require_relative 'journey_log'
 require_relative 'Journey'
 require_relative 'Station.rb'
 
@@ -18,7 +18,7 @@ class Oystercard
 
 
   def touch_in(station_name)
-    fail "Insufficient funds. Please top up." if @balance < MINIMUM_FARE
+    fail "Insufficient funds. Please top up." if @balance < MINIMUM_FARE + PENALTY_FARE
 
     if @current_journey
       deduct(PENALTY_FARE)
