@@ -2,6 +2,8 @@ require_relative 'oystercard'
 # => Knows everything about a journey
 class Journey
 
+  MINIMUM_FARE = 1
+
   def initialize
     @in_journey = false
     @start_station = nil
@@ -25,6 +27,9 @@ class Journey
     @journeys[-1][:out] = station
   end
 
+  def fare
+    in_journey? ? nil : MINIMUM_FARE
+  end
 
 private
 

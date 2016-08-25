@@ -37,4 +37,17 @@ describe Journey do
     subject.finish(station)
     expect(subject.instance_variable_get(:@journeys)[-1]).to include(:in => station, :out => station)
   end
+
+describe '#fare' do
+  it 'calculates a fare' do
+    subject.start(station)
+    subject.finish(station)
+    expect(subject.fare).to eq Journey::MINIMUM_FARE
+  end
+
+  it 'charges a penalty fare for an incomplete journey' do
+    subject.finish(station)
+    expect(subject.fare).to eq Journey::PENALTY_FARE
+  end
+end
 end
