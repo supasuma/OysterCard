@@ -6,10 +6,13 @@ class Oystercard
 LIMIT = 90
 BALANCE = 0
 MINIMUM_BALANCE = 1
+PENALTY_FARE = 6
 
   def initialize(balance: BALANCE, journey: Journey)
     @balance = balance
-    @current_journey = journey.new
+    @journey_class = journey
+    @current_journey = nil
+    @history = []
   end
 
   def top_up(amount)
@@ -18,31 +21,63 @@ MINIMUM_BALANCE = 1
   end
 
   def touch_in(station)
-    fail 'below minimum balance' if empty?
-    #@current_journey = Journey.new
-    @current_journey.start(station)
-    #deduct(@current_journey.fare)
+    check_balance
+    no_touch_out unless current_journey == nil
+    start_journey(station)
   end
 
   def touch_out(station)
-    raise "Penalty fare: No touch in" if deduct(@current_journey.fare) == 6
-    @current_journey.finish(station)
+    no_touch_in if current_journey == nil
+    finish_journey(station)
   end
-  
-  # private
 
-  attr_reader :balance, :entry_station
+  private
+
+  attr_reader :balance, :current_journey, :journey_class
+
+  def check_balance
+    fail 'below minimum balance' if empty?
+  end
 
   def deduct(amount)
     @balance -= amount
   end
 
   def full?(amount)
-    @balance + amount > LIMIT
+    balance + amount > LIMIT
   end
 
   def empty?
-    @balance < MINIMUM_BALANCE
+    balance < MINIMUM_BALANCE
+  end
+
+  def no_touch_out
+    current_journey.finish(nil)
+    deduct(PENALTY_FARE)
+    record_journey
+    @current_journey = nil
+  end
+
+  def no_touch_in
+    @current_journey = journey_class.new
+    current_journey.start(nil)
+    deduct(PENALTY_FARE)
+  end
+
+  def record_journey
+    @history << current_journey
+  end
+
+  def start_journey(station)
+    @current_journey = journey_class.new
+    current_journey.start(station)
+  end
+
+  def finish_journey(station)
+    current_journey.finish(station)
+    deduct(current_journey.fare)
+    record_journey
+    @current_journey = nil
   end
 
 end
