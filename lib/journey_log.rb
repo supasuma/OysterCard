@@ -1,13 +1,12 @@
 #knows how to store journeys
 class JourneyLog
 
-  PENALTY_FARE = 6
-
-  def initialize(journey_class = Journey)
+  def initialize(journey_class = Journey, fare_calculator = FareCalculator.new)
     @journey_class = journey_class
     @current_journey = nil
     @history = []
     @outstanding_charges = 0
+    @fare_calculator = fare_calculator
   end
 
   def start(station)
@@ -37,12 +36,10 @@ class JourneyLog
   def no_touch_in
     @current_journey = @journey_class.new
     current_journey.start(nil)
-    @outstanding_charges += PENALTY_FARE
   end
 
   def no_touch_out
     current_journey.finish(nil)
-    @outstanding_charges += PENALTY_FARE
     get_charges
     record_journey
     reset_current_journey
@@ -57,7 +54,8 @@ class JourneyLog
   end
 
   def get_charges
-    @outstanding_charges += current_journey.fare
+    zones = @current_journey.return_zones
+    @outstanding_charges += @fare_calculator.calculate_fare(zones)
   end
 
 end

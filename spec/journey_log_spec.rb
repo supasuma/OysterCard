@@ -2,9 +2,10 @@ require 'journey_log'
 
 describe JourneyLog do
 
-subject(:journey_log) {described_class.new(journey_class)}
+subject(:journey_log) {described_class.new(journey_class, fare_calculator)}
 let (:journey_class) { double(:journey_class, new: journey) }
-let (:journey) { double(:journey, start: nil, finish: nil, fare: 1) }
+let (:fare_calculator) { double(:fare_calculator, calculate_fare: 3)}
+let (:journey) { double(:journey, start: nil, finish: nil, return_zones: [1,3]) }
 
 let(:station) { double(:station) }
 
@@ -47,7 +48,7 @@ let(:station) { double(:station) }
       it 'should charge minimum fare' do
         journey_log.start(station)
         journey_log.finish(station)
-        expect(journey_log.get_outstanding_charges).to eq(1)
+        expect(journey_log.get_outstanding_charges).to eq(3)
       end
       it 'should reset outstanding_charges' do
         journey_log.start(station)
@@ -57,27 +58,20 @@ let(:station) { double(:station) }
       end
     end
 
-    context 'charging penalty fares' do
-      context 'should add penalty fare on touch out with no touch in' do
+    context 'incomplete journeys' do
+      context 'should finish existing journey on touch out with no touch in' do
         it 'should start journey' do
           journey_log.finish(station)
           expect(journey).to have_received(:start).with(nil)
         end
-        it 'should add penalty fare' do
-          journey_log.finish(station)
-          expect(journey_log.get_outstanding_charges).to eq(7)
-        end
       end
-      context 'should add penalty fare on touch in without previous touch out' do
+      context 'should start new journey on touch in without previous touch out' do
         before do
           journey_log.start(station)
           journey_log.start(station)
         end
         it 'should finish journey' do
           expect(journey).to have_received(:finish).with(nil)
-        end
-        it 'should add penalty fare' do
-          expect(journey_log.get_outstanding_charges).to eq(7)
         end
         it 'records incomplete journey' do
           expect(journey_log.instance_variable_get(:@history)).to eq [journey]
