@@ -10,9 +10,9 @@ describe Oystercard do
   describe '#top_up' do
     context 'when over limit' do
       it 'raises an error when more than £90 is added' do
-        LIMIT = Oystercard::LIMIT
-        oystercard.top_up(LIMIT)
-        expect{ oystercard.top_up 5 }.to raise_error "Limit £#{LIMIT} exceeded"
+        CARD_LIMIT = Oystercard::CARD_LIMIT
+        oystercard.top_up(CARD_LIMIT)
+        expect{ oystercard.top_up 5 }.to raise_error "Limit £#{CARD_LIMIT} exceeded"
       end
     end
 
