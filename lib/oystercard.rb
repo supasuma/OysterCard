@@ -3,18 +3,17 @@ require_relative 'journey'
 
 class Oystercard
 
-LIMIT = 90
-BALANCE = 0
-MINIMUM_BALANCE = 1
-PENALTY_FARE = 6
+CARD_LIMIT = 90
+STARTING_BALANCE = 0
+MINIMUM_BALANCE = 7
 
   def initialize(journey_log: JourneyLog.new)
-    @balance = BALANCE
+    @balance = STARTING_BALANCE
     @journey_log = journey_log
   end
 
   def top_up(amount)
-    fail "Limit £#{LIMIT} exceeded" if full?(amount)
+    fail "Limit £#{CARD_LIMIT} exceeded" if full?(amount)
     @balance += amount
   end
 
@@ -40,7 +39,7 @@ PENALTY_FARE = 6
   end
 
   def full?(amount)
-    balance + amount > LIMIT
+    balance + amount > CARD_LIMIT
   end
 
   def empty?
